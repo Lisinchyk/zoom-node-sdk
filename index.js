@@ -19,7 +19,11 @@ app.use(
     extended: true,
   })
 );
+app.get("/", (request, response) => {
+  response.json({ info: "Node.js, Express and Zoom API" });
+});
 
+//Use the ApiKey and APISecret from config.js
 const payload = {
   iss: config.APIKey,
   exp: new Date().getTime() + 5000,
@@ -52,7 +56,7 @@ app.post("/zoomcall", (req, res) => {
   rp(options)
     .then(function (response) {
       console.log("response is: ", response.join_url);
-
+      // response.status(200).json(response);
       let dataRes = {
         join_url: response.join_url,
       };
@@ -61,6 +65,7 @@ app.post("/zoomcall", (req, res) => {
       // res.send("create meeting result: " + JSON.stringify(response));
     })
     .catch(function (err) {
+      // API call failed...
       console.log("API call failed, reason ", err);
     });
 });
