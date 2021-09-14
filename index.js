@@ -66,6 +66,7 @@ app.post("/zoomcall", (req, res) => {
     })
     .catch(function (err) {
       // API call failed...
+      res.status(500).json(err.message);
       console.log("API call failed, reason ", err);
     });
 });
