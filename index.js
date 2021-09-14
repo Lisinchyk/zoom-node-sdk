@@ -9,7 +9,7 @@ const config = require("./config");
 const rp = require("request-promise");
 
 const app = express();
-const port = 3444;
+const PORT = process.env.PORT || 3444;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -70,6 +70,6 @@ app.post("/zoomcall", (req, res) => {
     });
 });
 
-app.listen(port, () => {
-  console.log(`App running on port ${port}.`);
+app.listen(PORT, () => {
+  console.log(`App running on port ${PORT}.`);
 });
