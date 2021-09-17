@@ -9,8 +9,8 @@ const crypto = require('crypto');
 const app = express();
 
 const PORT = process.env.PORT || 3444;
-const APIKey = process.env.APIKey;
-const APISecret = process.env.APISecret;
+const apiKey = process.env.API_KEY;
+const apiSecret = process.env.API_SECRET;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -30,9 +30,9 @@ app.post("/zoomcall", async (req, res) => {
     // if (!email) email = process.env.EMAIL;
 
     const token = jwt.sign({
-        iss: APIKey,
+        iss: apiKey,
         exp: new Date().getTime() + 5000,
-    }, APISecret);
+    }, apiSecret);
 
     const options = {
         method: "POST",
@@ -65,7 +65,7 @@ app.post("/zoomcall", async (req, res) => {
             return {meetingNumber, password}
         })
         .then(async ({meetingNumber, password}) => {
-            const signature = await generateSignature(APIKey, APISecret, meetingNumber, 1);
+            const signature = await generateSignature(apiKey, apiSecret, meetingNumber, 1);
 
             const data = {
                 name: userName,
@@ -76,7 +76,7 @@ app.post("/zoomcall", async (req, res) => {
                 lang: "en_US",
                 signature,
                 china: 0,
-                APIKey
+                apiKey
             }
 
             res.status(200).json(data);
