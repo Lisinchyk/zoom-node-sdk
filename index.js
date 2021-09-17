@@ -24,8 +24,10 @@ app.get("/", (request, response) => {
 });
 
 
-app.post("/zoomcall", (req, res) => {
-    const {email, userName} = req.body;
+app.post("/zoomcall", async (req, res) => {
+    let {email, userName} = await req.body;
+
+    // if (!email) email = process.env.EMAIL;
 
     const token = jwt.sign({
         iss: APIKey,
@@ -35,9 +37,6 @@ app.post("/zoomcall", (req, res) => {
     const options = {
         method: "POST",
         uri: `https://api.zoom.us/v2/users/${email}/meetings`,
-        qs: {
-            status: 'active'
-        },
         body: {
             topic: "Meeting",
             type: 1,
@@ -58,6 +57,7 @@ app.post("/zoomcall", (req, res) => {
 
     rp(options)
         .then(function (response) {
+            console.log(response.join_url);
             const info = response.join_url.replaceAll('https://us04web.zoom.us/j/', '').split('?');
             const meetingNumber = +info[0];
             const password = info[1].replaceAll('pwd=', '');
@@ -83,7 +83,7 @@ app.post("/zoomcall", (req, res) => {
         })
         .catch(function (err) {
             res.status(500).json(err.message);
-            console.log("API call failed, reason ", err);
+            console.log("API call failed, reason ", err.message);
         });
 });
 
