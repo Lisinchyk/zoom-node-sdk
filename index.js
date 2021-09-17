@@ -27,7 +27,7 @@ app.get("/", (request, response) => {
 app.post("/zoomcall", async (req, res) => {
     let {email, userName} = await req.body;
 
-    // if (!email) email = process.env.EMAIL;
+    if (!email) email = process.env.EMAIL;
 
     const token = jwt.sign({
         iss: apiKey,
