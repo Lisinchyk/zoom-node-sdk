@@ -43,6 +43,10 @@ app.post("/zoomcall", async (req, res) => {
             settings: {
                 host_video: "true",
                 participant_video: "true",
+                waiting_room: "false",
+                show_share_button: "true",
+                join_before_host: "true",
+
             },
         },
         auth: {
@@ -57,17 +61,16 @@ app.post("/zoomcall", async (req, res) => {
 
     rp(options)
         .then(function (response) {
-            console.log(response.join_url);
-            const info = response.join_url.replaceAll('https://us04web.zoom.us/j/', '').split('?');
-            const meetingNumber = +info[0];
-            const password = info[1].replaceAll('pwd=', '');
+            console.log(response);
 
-            return {meetingNumber, password}
-        })
-        .then(async ({meetingNumber, password}) => {
-            const signature = await generateSignature(apiKey, apiSecret, meetingNumber, 1);
+            const joinURL = response.join_url;
+            const meetingNumber = response.id;
+            const password = response.encrypted_password;
 
-            const data = {
+            const signature = generateSignature(apiKey, apiSecret, meetingNumber, 1);
+
+            res.status(200).json({
+                joinURL,
                 name: userName,
                 mn: meetingNumber,
                 pwd: password,
@@ -77,9 +80,7 @@ app.post("/zoomcall", async (req, res) => {
                 signature,
                 china: 0,
                 apiKey
-            }
-
-            res.status(200).json(data);
+            });
         })
         .catch(function (err) {
             res.status(500).json(err.message);
