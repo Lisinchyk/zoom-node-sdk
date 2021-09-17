@@ -59,7 +59,10 @@ app.post("/zoomcall", (req, res) => {
             const meetingNumber = +info[0];
             const password = info[1].replaceAll('pwd=', '');
 
-            const signature = generateSignature(APIKey, APISecret, meetingNumber, 1);
+            return {meetingNumber, password}
+        })
+        .then(async ({meetingNumber, password}) => {
+            const signature = await generateSignature(APIKey, APISecret, meetingNumber, 1);
 
             const data = {
                 name: userName,
