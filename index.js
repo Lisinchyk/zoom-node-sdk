@@ -19,6 +19,11 @@ app.use(bodyParser.urlencoded({
     extended: true,
 }));
 
+const token = jwt.sign({
+    iss: APIKey,
+    exp: new Date().getTime() + 5000,
+}, APISecret);
+
 app.get("/", (request, response) => {
     response.json({info: "Node.js, Express and Zoom API"});
 });
@@ -27,14 +32,14 @@ app.get("/", (request, response) => {
 app.post("/zoomcall", (req, res) => {
     const {email, userName} = req.body;
 
-    const token = jwt.sign({
-        iss: APIKey,
-        exp: new Date().getTime() + 5000,
-    }, APISecret);
+
 
     const options = {
         method: "POST",
-        uri: "https://api.zoom.us/v2/users/" + email + "/meetings",
+        uri: `https://api.zoom.us/v2/users/${email}/meetings`,
+        qs: {
+            status: 'active'
+        },
         body: {
             topic: "Meeting",
             type: 1,
